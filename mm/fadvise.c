@@ -63,6 +63,9 @@ SYSCALL_DEFINE4(fadvise64_64, int, fd, loff_t, offset, loff_t, len, int, advice)
     case POSIX_FADV_STREAM_ASSIGN:
     case POSIX_FADV_STREAM_RELEASE:
     case POSIX_FADV_STREAM_GET:
+    case POSIX_FADV_STREAM_ASSIGN:
+    case POSIX_FADV_STREAM_RELEASE:
+    case POSIX_FADV_STREAM_GET:
 			/* no bad return value, but ignore advice */
 			break;
 		default:
