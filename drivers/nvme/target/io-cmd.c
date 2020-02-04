@@ -74,7 +74,9 @@ static void nvmet_execute_rw(struct nvmet_req *req)
 	bio->bi_iter.bi_sector = sector;
 	bio->bi_private = req;
 	bio->bi_end_io = nvmet_bio_done;
-	bio_set_op_attrs(bio, op, op_flags);
+	if (req->cmd->rw.control & NVME_RW_DTYPE_STREAMS)
+    bio->bi_streamid = req->cmd->rw.dsmgmt >> 16;
+  bio_set_op_attrs(bio, op, op_flags);
 
 	for_each_sg(req->sg, sg, req->sg_cnt, i) {
 		while (bio_add_page(bio, sg_page(sg), sg->length, sg->offset)
@@ -84,6 +86,8 @@ static void nvmet_execute_rw(struct nvmet_req *req)
 			bio = bio_alloc(GFP_KERNEL, min(sg_cnt, BIO_MAX_PAGES));
 			bio->bi_bdev = req->ns->bdev;
 			bio->bi_iter.bi_sector = sector;
+      if (req->cmd->rw.control & NVME_RW_DTYPE_STREAMS)
+        bio->bi_streamid = req->cmd->rw.dsmgmt >> 16;
 			bio_set_op_attrs(bio, op, op_flags);
 
 			bio_chain(bio, prev);

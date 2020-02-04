@@ -509,6 +509,7 @@ xfs_submit_ioend(
 		return status;
 	}
 
+  bio_set_streamid(ioend->io_bio, ioend->io_inode->i_streamid);
 	submit_bio(ioend->io_bio);
 	return 0;
 }
@@ -569,6 +570,7 @@ xfs_chain_bio(
 	bio_get(ioend->io_bio);		/* for xfs_destroy_ioend */
 	bio_set_op_attrs(ioend->io_bio, REQ_OP_WRITE,
 			  (wbc->sync_mode == WB_SYNC_ALL) ? WRITE_SYNC : 0);
+  bio_set_streamid(ioend->io_bio, ioend->io_inode->i_streamid);
 	submit_bio(ioend->io_bio);
 	ioend->io_bio = new;
 }
